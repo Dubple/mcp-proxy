@@ -33,6 +33,7 @@ options:
 - `--endpoint`: If `server` is set to `sse` or `stream`, this option sets the endpoint path (default: `/sse` or `/mcp`)
 - `--sseEndpoint`: Set the SSE endpoint path (default: `/sse`). Overrides `--endpoint` if `server` is set to `sse`.
 - `--streamEndpoint`: Set the streamable HTTP endpoint path (default: `/mcp`). Overrides `--endpoint` if `server` is set to `stream`.
+- `--host`: Specify the host address to bind to (default: localhost)
 - `--port`: Specify the port to listen on (default: 8080)
 - `--debug`: Enable debug logging
 - `--shell`: Spawn the server via the user's shell
