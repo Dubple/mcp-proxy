@@ -377,22 +377,19 @@ const handleSSERequest = async <T extends ServerLike>({
 
 export const startHTTPServer = async <T extends ServerLike>({
   createServer,
-  eventStore,
+  eventStore = new InMemoryEventStore(),
+  host = "localhost",
   onClose,
   onConnect,
-  onUnhandledRequest,
   port,
-  sseEndpoint,
-  streamEndpoint,
+  sseEndpoint = "/sse",
+  streamEndpoint = "/mcp",
 }: {
   createServer: (request: http.IncomingMessage) => Promise<T>;
   eventStore?: EventStore;
+  host?: string;
   onClose?: (server: T) => Promise<void>;
   onConnect?: (server: T) => Promise<void>;
-  onUnhandledRequest?: (
-    req: http.IncomingMessage,
-    res: http.ServerResponse,
-  ) => Promise<void>;
   port: number;
   sseEndpoint?: null | string;
   streamEndpoint?: null | string;
@@ -474,11 +471,17 @@ export const startHTTPServer = async <T extends ServerLike>({
     }
   });
 
-  await new Promise((resolve) => {
-    httpServer.listen(port, "::", () => {
-      resolve(undefined);
+  await new Promise<void>((resolve, reject) => {
+    httpServer.listen(port, host, () => {
+      resolve();
+    });
+
+    httpServer.on("error", (error) => {
+      reject(error);
     });
   });
+
+  console.info(`[mcp-proxy] listening on ${host}:${port}`);
 
   return {
     close: async () => {
